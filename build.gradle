@@ -45,6 +45,10 @@ allprojects {
 				excludeGroupByRegex "org.ow2.asm"
 			}
 		}
+		maven {
+			url "https://oss.sonatype.org/content/repositories/snapshots"
+		}
+		mavenLocal()
 	}
 }
 
@@ -80,6 +84,10 @@ dependencies {
 
 	include 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.6'
 	include 'org.ow2.sat4j:org.ow2.sat4j.pb:2.3.6'
+
+	api "pro.gravit.launcher:launcher-core:5.3.0-SNAPSHOT"
+	api "pro.gravit.launcher:launcher-ws-api:5.3.0-SNAPSHOT"
+	api "pro.gravit.launcher:launcher-client-api:5.3.0-SNAPSHOT"
 
 	testCompileOnly 'org.jetbrains:annotations:23.0.0'
 

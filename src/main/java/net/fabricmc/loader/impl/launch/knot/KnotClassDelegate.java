@@ -214,6 +214,8 @@ final class KnotClassDelegate<T extends ClassLoader & ClassLoaderAccess> impleme
 			if (c == null) {
 				if (name.startsWith("java.")) { // fast path for java.** (can only be loaded by the platform CL anyway)
 					c = PLATFORM_CLASS_LOADER.loadClass(name);
+				} else if (name.startsWith("pro.gravit.launcher.") || name.startsWith("pro.gravit.utils.")) { // launcher
+					c = KnotClassDelegate.class.getClassLoader().loadClass(name);
 				} else {
 					c = tryLoadClass(name, false); // try local load
 

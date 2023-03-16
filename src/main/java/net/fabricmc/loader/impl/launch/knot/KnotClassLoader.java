@@ -25,6 +25,8 @@ import java.security.SecureClassLoader;
 import java.util.Enumeration;
 import java.util.Objects;
 
+import pro.gravit.launcher.api.ClientService;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.impl.game.GameProvider;
 import net.fabricmc.loader.impl.launch.knot.KnotClassDelegate.ClassLoaderAccess;
@@ -50,11 +52,23 @@ final class KnotClassLoader extends SecureClassLoader implements ClassLoaderAcce
 	private final ClassLoader originalLoader;
 	private final KnotClassDelegate<KnotClassLoader> delegate;
 
+	private final boolean useLauncherFindLibrary;
+
 	KnotClassLoader(boolean isDevelopment, EnvType envType, GameProvider provider) {
 		super(new DynamicURLClassLoader(new URL[0]));
 		this.originalLoader = getClass().getClassLoader();
 		this.urlLoader = (DynamicURLClassLoader) getParent();
 		this.delegate = new KnotClassDelegate<>(isDevelopment, envType, this, originalLoader, provider);
+		boolean isClient;
+
+		try {
+			Class.forName("pro.gravit.launcher.api.ClientService");
+			isClient = true;
+		} catch (ClassNotFoundException e) {
+			isClient = false;
+		}
+
+		useLauncherFindLibrary = isClient;
 	}
 
 	KnotClassDelegate<?> getDelegate() {
@@ -115,6 +129,15 @@ final class KnotClassLoader extends SecureClassLoader implements ClassLoaderAcce
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		return delegate.tryLoadClass(name, false);
+	}
+
+	@Override
+	protected String findLibrary(String libname) {
+		if (useLauncherFindLibrary) {
+			return ClientService.findLibrary(libname);
+		} else {
+			return super.findLibrary(libname);
+		}
 	}
 
 	@Override
