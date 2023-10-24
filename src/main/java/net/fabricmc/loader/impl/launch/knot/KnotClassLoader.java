@@ -96,6 +96,13 @@ final class KnotClassLoader extends SecureClassLoader implements ClassLoaderAcce
 	}
 
 	@Override
+	public Enumeration<URL> findResources(String name) throws IOException {
+		Objects.requireNonNull(name);
+
+		return urlLoader.findResources(name);
+	}
+
+	@Override
 	public InputStream getResourceAsStream(String name) {
 		Objects.requireNonNull(name);
 
